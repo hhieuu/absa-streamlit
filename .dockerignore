@@ -1,0 +1,7 @@
+*.ipynb
+__pycache__
+Pipfile
+Pipfile.lock
+checkpoints/*.pkl
+data/*.csv
+.git

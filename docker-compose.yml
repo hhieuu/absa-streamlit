@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+
+  absa-api:
+    build: .
+    restart: always
+    ports: 
+      - "3007:3007"
+    environment:
+      - PORT=3007
+    volumes:
+      - /Users/hoanghieu/projects/absa/checkpoints:/app/checkpoints
+    command: uvicorn api:app --host 0.0.0.0 --port 3007
+
+  streamlit-webapp:
+    build: .
+    restart: always
+    ports: 
+      - "8501:8501"
+    environment:
+      - ABSA_API_ADDRESS=http://absa-api:3007/predict
+    entrypoint: streamlit run
+    command: app.py
+    depends_on: 
+      - absa-api

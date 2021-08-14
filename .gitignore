@@ -1,0 +1,7 @@
+__pycache__
+*/__pycache__
+*.ipynb
+Pipfile
+Pipfile.lock
+*.csv
+*.pkl
