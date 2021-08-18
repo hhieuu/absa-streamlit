@@ -30,7 +30,7 @@ async def absa(text: str):
     """
     Main entry point for ATE and ABSA
     """
-    sentence = helpers.do_absa(text=text)
-    result = sentence.to_dict()
+    sentences = helpers.do_absa(text=text)
+    results = [sentence.to_dict() for sentence in sentences]
 
-    return result
+    return results

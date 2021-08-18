@@ -65,8 +65,12 @@ input_text = st.text_area(
 # get and parse input text
 st.subheader("Parse results:")
 response_data = make_absa_api_request(input_text)
-output_markdown = ""
-for i, aspect in enumerate(response_data.get("aspects", [])):
-    output_markdown += f"{i + 1}. **Aspect**: {aspect['aspect']} => **{aspect['sentiment']}**\n"
+for sentence in response_data:
+    output_sentence = f"**Sentence**: {sentence['text']}\n"
+    output_markdown = ""
+    st.markdown(output_sentence)
     
-st.markdown(output_markdown)
+    for i, aspect in enumerate(sentence.get("aspects", [])):
+        output_markdown += f"{i + 1}. **Aspect**: {aspect['aspect']} => **{aspect['sentiment']}**\n"
+    
+    st.markdown(output_markdown)

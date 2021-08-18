@@ -28,21 +28,27 @@ absa_model = load_model(absa_model, 'checkpoints/bert_ABSA2.pkl', device=DEVICE)
 
 
 # functions
-def parse_text_for_aspects(text: str):
+def parse_text_for_aspects(text: str) -> List[Sentence]:
     doc = spacy_pipeline(text)
-    aspects = extractor.parse_noun_chunks(
-        doc, 
-        do_lemma=False, 
-        do_lower=False,
-        get_verb=False,
-        return_base_chunk=False
-    )
-    sentence = Sentence(
-        text=text,
-        doc=doc,
-        aspects=[Aspect(asp) for asp in aspects]
-    )
-    return sentence
+    sentences = []
+    for sent in doc.sents:
+        sent_text = sent.text
+        new_doc = spacy_pipeline(sent_text)
+        aspects = extractor.parse_noun_chunks(
+            new_doc, 
+            do_lemma=False, 
+            do_lower=False,
+            get_verb=False,
+            return_base_chunk=False
+        )
+        sentence = Sentence(
+            text=new_doc.text,
+            doc=new_doc,
+            aspects=[Aspect(asp) for asp in aspects]
+        )
+        sentences.append(sentence)
+        
+    return sentences
 
 
 def do_absa_single_aspect(sentence_tokens: List[str], aspect_tokens: List[str]):
@@ -66,15 +72,16 @@ def do_absa_single_aspect(sentence_tokens: List[str], aspect_tokens: List[str]):
     return outputs.tolist()[0], pred_label[0].tolist(), sentiment
 
 
-def do_absa(text: str):
-    sentence = parse_text_for_aspects(text)
-    for aspect in sentence.aspects:
-        outputs, pred_label, sentiment = do_absa_single_aspect(
-            sentence.tokens,
-            aspect.tokens
-        )
-        aspect.scores = outputs
-        aspect.label = pred_label
-        aspect.sentiment = sentiment
+def do_absa(text: str) -> List[Sentence]:
+    sentences = parse_text_for_aspects(text)
+    for sentence in sentences:
+        for aspect in sentence.aspects:
+            outputs, pred_label, sentiment = do_absa_single_aspect(
+                sentence.tokens,
+                aspect.tokens
+            )
+            aspect.scores = outputs
+            aspect.label = pred_label
+            aspect.sentiment = sentiment
         
-    return sentence
+    return sentences

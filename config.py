@@ -1,7 +1,7 @@
 import os
 
 # keyword extraction
-INCLUDE_STOPWORDS = ["lot", "lots", "alot"]
+INCLUDE_STOPWORDS = ["lot", "lots", "alot", "thing", "user"]
 EXCLUDE_STOPWORDS = ["no", 'not', "n't", "n\'t", "nt"]
 SPACY_DISABLE_COMPONENTS = ['ner']
 
